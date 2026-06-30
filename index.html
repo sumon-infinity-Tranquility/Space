@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Space | Real Estate Operating System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <a class="brand" href="#home" aria-label="Space home">
+          <span class="brand-mark">S</span>
+          <span>Space</span>
+        </a>
+        <nav class="nav" aria-label="Primary navigation">
+          <a href="#inventory">Inventory</a>
+          <a href="#map">Map</a>
+          <a href="#add">Add Space</a>
+          <a href="#inquiries">Inquiries</a>
+        </nav>
+        <button class="ghost-button" id="seedDataButton" type="button">Load Demo Data</button>
+      </header>
+
+      <main id="home">
+        <section class="hero">
+          <div class="hero-copy">
+            <span class="eyebrow">Accommodation and living vertical</span>
+            <h1>One managed system for hotels, homes, offices, factories, and operational rentals.</h1>
+            <p>
+              Space brings fragmented stay, rent, and secure operating needs into one searchable platform with reliable listings,
+              transparent pricing, verified utility details, and direct booking flows.
+            </p>
+            <div class="hero-actions">
+              <a class="primary-button" href="#inventory">Explore spaces</a>
+              <a class="secondary-button" href="#add">Publish listing</a>
+            </div>
+          </div>
+          <div class="hero-panel" aria-label="Space operating summary">
+            <div>
+              <span class="metric">3</span>
+              <span class="metric-label">Brands</span>
+            </div>
+            <div>
+              <span class="metric" id="listingCount">0</span>
+              <span class="metric-label">Live listings</span>
+            </div>
+            <div>
+              <span class="metric">24h</span>
+              <span class="metric-label">Response target</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="brand-strip" aria-label="Space brands">
+          <article>
+            <span>ACTIVE</span>
+            <p>Commercial spaces for restaurants, offices, factories, retail floors, warehouses, and operation teams.</p>
+          </article>
+          <article>
+            <span>HAVEN</span>
+            <p>Residential rentals that make finding a home in Dhaka calmer, clearer, and easier to trust.</p>
+          </article>
+          <article>
+            <span>SLEEP</span>
+            <p>Affordable, comfortable stays where students, bachelors, and young professionals can settle quickly.</p>
+          </article>
+        </section>
+
+        <section class="workspace" id="inventory">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow">Verified inventory</span>
+              <h2>Find the right space by brand, need, and location.</h2>
+            </div>
+            <label class="search">
+              <span class="sr-only">Search listings</span>
+              <input id="searchInput" type="search" placeholder="Search Dhaka, office, family, warehouse..." />
+            </label>
+          </div>
+
+          <div class="filter-row" role="group" aria-label="Filter listings by brand">
+            <button class="chip active" data-filter="all" type="button">All</button>
+            <button class="chip" data-filter="Active" type="button">Active</button>
+            <button class="chip" data-filter="Haven" type="button">Haven</button>
+            <button class="chip" data-filter="Sleep" type="button">Sleep</button>
+          </div>
+
+          <div class="listing-grid" id="listingGrid" aria-live="polite"></div>
+        </section>
+
+        <section class="map-zone" id="map">
+          <div class="map-copy">
+            <span class="eyebrow">Google Maps location</span>
+            <h2 id="mapTitle">Select a listing to inspect its location.</h2>
+            <p id="mapDescription">Listings include area, utility details, price, and coordinates so operations teams can decide faster.</p>
+            <dl class="detail-list">
+              <div>
+                <dt>Selected brand</dt>
+                <dd id="selectedBrand">None</dd>
+              </div>
+              <div>
+                <dt>Monthly price</dt>
+                <dd id="selectedPrice">-</dd>
+              </div>
+              <div>
+                <dt>Contact</dt>
+                <dd id="selectedContact">-</dd>
+              </div>
+            </dl>
+          </div>
+          <div class="map-frame">
+            <iframe
+              id="mapFrame"
+              title="Google map for selected Space listing"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps?q=Dhaka%2C%20Bangladesh&output=embed"
+            ></iframe>
+          </div>
+        </section>
+
+        <section class="data-zone">
+          <form class="form-panel" id="listingForm">
+            <div class="section-head compact" id="add">
+              <div>
+                <span class="eyebrow">Store data</span>
+                <h2>Add a property listing</h2>
+              </div>
+              <span class="status-pill" id="backendStatus">Local mode</span>
+            </div>
+
+            <div class="form-grid">
+              <label>
+                Brand
+                <select name="brand" required>
+                  <option value="Active">Active</option>
+                  <option value="Haven">Haven</option>
+                  <option value="Sleep">Sleep</option>
+                </select>
+              </label>
+              <label>
+                Title
+                <input name="title" required placeholder="Banani serviced office" />
+              </label>
+              <label>
+                Location
+                <input name="location" required placeholder="Banani, Dhaka" />
+              </label>
+              <label>
+                Price per month
+                <input name="price" type="number" min="0" required placeholder="85000" />
+              </label>
+              <label>
+                Bedrooms or units
+                <input name="units" required placeholder="3 rooms / 12 desks / 2200 sqft" />
+              </label>
+              <label>
+                Contact
+                <input name="contact" required placeholder="+880 1XXX XXXXXX" />
+              </label>
+              <label>
+                Latitude
+                <input name="lat" type="number" step="any" required placeholder="23.7937" />
+              </label>
+              <label>
+                Longitude
+                <input name="lng" type="number" step="any" required placeholder="90.4066" />
+              </label>
+              <label class="full">
+                Description
+                <textarea name="description" rows="4" required placeholder="Verified electricity, gas line, lift, security, and operating support."></textarea>
+              </label>
+            </div>
+
+            <button class="primary-button submit" type="submit">Save listing</button>
+          </form>
+
+          <aside class="inquiry-panel" id="inquiries">
+            <div class="section-head compact">
+              <div>
+                <span class="eyebrow">Booking flow</span>
+                <h2>Request a visit</h2>
+              </div>
+            </div>
+            <form id="inquiryForm">
+              <label>
+                Name
+                <input name="name" required placeholder="Your name" />
+              </label>
+              <label>
+                Phone or email
+                <input name="contact" required placeholder="Phone or email" />
+              </label>
+              <label>
+                Space needed
+                <select name="listingId" id="inquiryListing" required></select>
+              </label>
+              <label>
+                Message
+                <textarea name="message" rows="4" required placeholder="Tell us your move-in date, budget, and must-have details."></textarea>
+              </label>
+              <button class="secondary-button submit" type="submit">Send inquiry</button>
+            </form>
+            <div class="saved-inquiries" id="savedInquiries" aria-live="polite"></div>
+          </aside>
+        </section>
+      </main>
+    </div>
+
+    <template id="listingCardTemplate">
+      <article class="listing-card">
+        <div class="card-media"></div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <span class="badge"></span>
+            <strong class="price"></strong>
+          </div>
+          <h3></h3>
+          <p class="location"></p>
+          <p class="description"></p>
+          <div class="card-footer">
+            <span class="units"></span>
+            <button class="map-button" type="button">View map</button>
+          </div>
+        </div>
+      </article>
+    </template>
+
+    <script src="./config.js"></script>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
