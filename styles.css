@@ -43,6 +43,73 @@ textarea {
   min-height: 100vh;
 }
 
+.is-hidden {
+  display: none;
+}
+
+.auth-screen {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 440px);
+  align-items: center;
+  gap: clamp(24px, 5vw, 72px);
+  padding: clamp(26px, 6vw, 86px);
+  color: #fff;
+  background:
+    linear-gradient(90deg, rgba(24, 63, 53, 0.92), rgba(24, 63, 53, 0.58)),
+    url("https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1800&q=80") center/cover;
+}
+
+.auth-copy {
+  max-width: 760px;
+}
+
+.auth-brand {
+  margin-bottom: 40px;
+}
+
+.auth-copy p {
+  max-width: 620px;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 1.08rem;
+  line-height: 1.7;
+}
+
+.auth-panel {
+  display: grid;
+  gap: 16px;
+  padding: clamp(22px, 4vw, 34px);
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 5px;
+  background: #eef5f1;
+  border-radius: 8px;
+}
+
+.auth-tab {
+  min-height: 40px;
+  border: 0;
+  border-radius: 6px;
+  color: var(--muted);
+  background: transparent;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.auth-tab.active {
+  color: #fff;
+  background: var(--forest);
+}
+
 .topbar {
   position: sticky;
   top: 0;
@@ -55,6 +122,12 @@ textarea {
   background: rgba(251, 252, 250, 0.92);
   border-bottom: 1px solid var(--line);
   backdrop-filter: blur(16px);
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .brand {
@@ -252,8 +325,7 @@ h2 {
 
 .workspace,
 .data-zone,
-.map-zone,
-.login-zone {
+.map-zone {
   padding: clamp(34px, 5vw, 70px) clamp(18px, 4vw, 56px);
 }
 
@@ -476,34 +548,17 @@ label textarea {
   gap: 22px;
 }
 
-.login-zone {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.42fr);
-  align-items: center;
-  gap: 24px;
-  background: #fff;
-  border-bottom: 1px solid var(--line);
-}
-
-.login-copy p,
 .login-status {
   color: var(--muted);
   line-height: 1.6;
 }
 
 .form-panel,
-.inquiry-panel,
-.login-panel {
+.inquiry-panel {
   padding: clamp(18px, 3vw, 30px);
   background: #fff;
   border: 1px solid var(--line);
   border-radius: 8px;
-}
-
-.login-panel {
-  display: grid;
-  gap: 14px;
-  box-shadow: 0 8px 28px rgba(22, 32, 28, 0.06);
 }
 
 .login-status {
@@ -592,10 +647,10 @@ label textarea {
 
 @media (max-width: 980px) {
   .topbar,
+  .auth-screen,
   .hero,
   .map-zone,
-  .data-zone,
-  .login-zone {
+  .data-zone {
     grid-template-columns: 1fr;
   }
 
@@ -627,6 +682,11 @@ label textarea {
 
   .ghost-button {
     width: 100%;
+  }
+
+  .topbar-actions {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .map-frame {

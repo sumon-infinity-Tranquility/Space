@@ -56,10 +56,17 @@ const demoListings = [
 let listings = [];
 let inquiries = [];
 let activeFilter = "all";
+let authMode = "login";
 let db = null;
 let firebaseApi = null;
 
 const nodes = {
+  authScreen: document.querySelector("#authScreen"),
+  appShell: document.querySelector("#appShell"),
+  authForm: document.querySelector("#authForm"),
+  authSubmit: document.querySelector("#authSubmit"),
+  authStatus: document.querySelector("#authStatus"),
+  logoutButton: document.querySelector("#logoutButton"),
   listingGrid: document.querySelector("#listingGrid"),
   listingCount: document.querySelector("#listingCount"),
   listingForm: document.querySelector("#listingForm"),
@@ -75,8 +82,6 @@ const nodes = {
   selectedPrice: document.querySelector("#selectedPrice"),
   selectedContact: document.querySelector("#selectedContact"),
   mapFrame: document.querySelector("#mapFrame"),
-  loginForm: document.querySelector("#loginForm"),
-  loginStatus: document.querySelector("#loginStatus"),
   seedDataButton: document.querySelector("#seedDataButton"),
   template: document.querySelector("#listingCardTemplate")
 };
@@ -135,7 +140,11 @@ function wireEvents() {
   });
 
   nodes.searchInput.addEventListener("input", renderListings);
-  nodes.loginForm.addEventListener("submit", saveLogin);
+  document.querySelectorAll("[data-auth-mode]").forEach((button) => {
+    button.addEventListener("click", () => setAuthMode(button.dataset.authMode));
+  });
+  nodes.authForm.addEventListener("submit", saveLogin);
+  nodes.logoutButton.addEventListener("click", logout);
   nodes.listingForm.addEventListener("submit", saveListing);
   nodes.inquiryForm.addEventListener("submit", saveInquiry);
   nodes.seedDataButton.addEventListener("click", seedDemoData);
@@ -323,14 +332,32 @@ function saveLogin(event) {
   event.preventDefault();
   const form = new FormData(event.currentTarget);
   const user = form.get("user").trim();
-  localStorage.setItem("spaceUser", JSON.stringify({ user, signedInAt: new Date().toISOString() }));
+  localStorage.setItem("spaceUser", JSON.stringify({ user, mode: authMode, signedInAt: new Date().toISOString() }));
   event.currentTarget.reset();
   renderLogin();
+  document.querySelector("#home").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function renderLogin() {
   const session = readLocal("spaceUser", null);
-  nodes.loginStatus.textContent = session ? `Logged in as ${session.user}` : "Not logged in";
+  nodes.authScreen.classList.toggle("is-hidden", Boolean(session));
+  nodes.appShell.classList.toggle("is-hidden", !session);
+  nodes.authStatus.textContent = session ? `Signed in as ${session.user}` : "Enter your details to continue.";
+}
+
+function setAuthMode(mode) {
+  authMode = mode;
+  document.querySelectorAll("[data-auth-mode]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.authMode === mode);
+  });
+  nodes.authSubmit.textContent = mode === "signin" ? "Sign in" : "Log in";
+  nodes.authStatus.textContent = mode === "signin" ? "Create or confirm your Space access." : "Enter your details to continue.";
+}
+
+function logout() {
+  localStorage.removeItem("spaceUser");
+  renderLogin();
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function getBaseListings() {
