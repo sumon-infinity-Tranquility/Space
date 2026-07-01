@@ -58,6 +58,7 @@ let inquiries = [];
 let activeFilter = "all";
 let authMode = "login";
 let authRole = "customer";
+let currentView = "dashboard";
 let db = null;
 let firebaseApi = null;
 
@@ -68,6 +69,9 @@ const nodes = {
   authSubmit: document.querySelector("#authSubmit"),
   authStatus: document.querySelector("#authStatus"),
   logoutButton: document.querySelector("#logoutButton"),
+  appViews: document.querySelectorAll(".app-view"),
+  viewLinks: document.querySelectorAll("[data-view]"),
+  propertyTools: document.querySelector("#propertyTools"),
   dashboardEyebrow: document.querySelector("#dashboardEyebrow"),
   dashboardTitle: document.querySelector("#dashboardTitle"),
   roleStatus: document.querySelector("#roleStatus"),
@@ -155,6 +159,12 @@ function wireEvents() {
   });
 
   nodes.searchInput.addEventListener("input", renderListings);
+  nodes.viewLinks.forEach((link) => {
+    link.addEventListener("click", (event) => {
+      event.preventDefault();
+      showView(link.dataset.view);
+    });
+  });
   document.querySelectorAll("[data-auth-mode]").forEach((button) => {
     button.addEventListener("click", () => setAuthMode(button.dataset.authMode));
   });
@@ -271,7 +281,7 @@ function selectListing(id, shouldScroll = true) {
   nodes.mapFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`;
   nodes.inquiryListing.value = listing.id;
   if (shouldScroll) {
-    document.querySelector("#map").scrollIntoView({ behavior: "smooth", block: "start" });
+    showView("map");
   }
 }
 
@@ -332,6 +342,7 @@ async function saveInquiry(event) {
   event.currentTarget.reset();
   renderInquiries();
   renderDashboard();
+  showView("inquiries");
 }
 
 async function seedDemoData() {
@@ -356,7 +367,7 @@ function saveLogin(event) {
   event.currentTarget.reset();
   renderLogin();
   renderDashboard();
-  document.querySelector("#home").scrollIntoView({ behavior: "smooth", block: "start" });
+  showView("dashboard");
 }
 
 function renderLogin() {
@@ -366,6 +377,7 @@ function renderLogin() {
   nodes.authStatus.textContent = session ? `Signed in as ${session.user}` : "Enter your details to continue.";
   if (session) {
     setAuthRole(session.role || "customer");
+    showView(currentView || "dashboard");
   }
 }
 
@@ -410,6 +422,7 @@ function renderDashboard() {
     nodes.dashboardActionTitle.textContent = "Add property";
     nodes.dashboardActionText.textContent = "Submit a new property with map coordinates, size, and details link.";
     nodes.dashboardActionLink.href = "#add";
+    nodes.dashboardActionLink.dataset.view = "add";
     nodes.dashboardActionLink.textContent = "Open property form";
     return;
   }
@@ -426,12 +439,41 @@ function renderDashboard() {
   nodes.dashboardActionTitle.textContent = "Find a space";
   nodes.dashboardActionText.textContent = "Search by area, size, status, or intended use.";
   nodes.dashboardActionLink.href = "#inventory";
+  nodes.dashboardActionLink.dataset.view = "inventory";
   nodes.dashboardActionLink.textContent = "Open inventory";
 }
 
 function logout() {
   localStorage.removeItem("spaceUser");
+  currentView = "dashboard";
   renderLogin();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function showView(view) {
+  const requestedView = view || "dashboard";
+  const targetId = requestedView === "add" || requestedView === "inquiries" ? "propertyTools" : requestedView;
+  const target = document.querySelector(`#${targetId}`);
+  if (!target) return;
+
+  currentView = requestedView;
+  nodes.appViews.forEach((section) => {
+    section.classList.toggle("active-view", section === target);
+  });
+
+  nodes.viewLinks.forEach((link) => {
+    link.classList.toggle("active", link.dataset.view === requestedView);
+  });
+
+  nodes.propertyTools.classList.toggle("show-add", requestedView === "add");
+  nodes.propertyTools.classList.toggle("show-inquiries", requestedView === "inquiries");
+
+  if (requestedView !== "add" && requestedView !== "inquiries") {
+    nodes.propertyTools.classList.add("show-add");
+    nodes.propertyTools.classList.remove("show-inquiries");
+  }
+
+  window.location.hash = requestedView;
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 

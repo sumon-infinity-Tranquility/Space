@@ -44,16 +44,17 @@
 
     <div class="shell app-shell is-hidden" id="appShell">
       <header class="topbar">
-        <a class="brand" href="#home" aria-label="Space home">
+        <a class="brand" href="#home" data-view="home" aria-label="Space home">
           <span class="brand-mark">S</span>
           <span>Space</span>
         </a>
         <nav class="nav" aria-label="Primary navigation">
-          <a href="#dashboard">Dashboard</a>
-          <a href="#inventory">Inventory</a>
-          <a href="#map">Map</a>
-          <a href="#add">Add Space</a>
-          <a href="#inquiries">Inquiries</a>
+          <a href="#home" data-view="home">Home</a>
+          <a href="#dashboard" data-view="dashboard">Dashboard</a>
+          <a href="#inventory" data-view="inventory">Inventory</a>
+          <a href="#map" data-view="map">Map</a>
+          <a href="#add" data-view="add">Add Space</a>
+          <a href="#inquiries" data-view="inquiries">Inquiries</a>
         </nav>
         <div class="topbar-actions">
           <button class="ghost-button" id="seedDataButton" type="button">Load Registry Data</button>
@@ -61,7 +62,8 @@
         </div>
       </header>
 
-      <main id="home">
+      <main id="appMain">
+        <section class="home-view app-view active-view" id="home">
         <section class="hero">
           <div class="hero-copy">
             <span class="eyebrow">Accommodation and living vertical</span>
@@ -70,8 +72,8 @@
               Verified rental spaces with clear prices, map links, photos, contacts, and operating details in one place.
             </p>
             <div class="hero-actions">
-              <a class="primary-button" href="#inventory">Explore spaces</a>
-              <a class="secondary-button" href="#add">Publish listing</a>
+              <a class="primary-button" href="#inventory" data-view="inventory">Explore spaces</a>
+              <a class="secondary-button" href="#add" data-view="add">Publish listing</a>
             </div>
           </div>
           <div class="hero-panel" aria-label="Space operating summary">
@@ -104,8 +106,9 @@
             <p>Affordable, comfortable stays where students, bachelors, and young professionals can settle quickly.</p>
           </article>
         </section>
+        </section>
 
-        <section class="dashboard-zone" id="dashboard">
+        <section class="dashboard-zone app-view" id="dashboard">
           <div class="section-head">
             <div>
               <span class="eyebrow" id="dashboardEyebrow">Profile dashboard</span>
@@ -133,12 +136,12 @@
               <span class="profile-label">Next action</span>
               <h3 id="dashboardActionTitle">Start browsing</h3>
               <p id="dashboardActionText">Search the registry and open exact map links for the best match.</p>
-              <a class="secondary-button" id="dashboardActionLink" href="#inventory">Open inventory</a>
+              <a class="secondary-button" id="dashboardActionLink" href="#inventory" data-view="inventory">Open inventory</a>
             </article>
           </div>
         </section>
 
-        <section class="workspace" id="inventory">
+        <section class="workspace app-view" id="inventory">
           <div class="section-head">
             <div>
               <span class="eyebrow">Verified inventory</span>
@@ -160,7 +163,7 @@
           <div class="listing-grid" id="listingGrid" aria-live="polite"></div>
         </section>
 
-        <section class="map-zone" id="map">
+        <section class="map-zone app-view" id="map">
           <div class="map-copy">
             <span class="eyebrow">Google Maps location</span>
             <h2 id="mapTitle">Select a listing to inspect its location.</h2>
@@ -192,7 +195,7 @@
           </div>
         </section>
 
-        <section class="data-zone">
+        <section class="data-zone app-view show-add" id="propertyTools">
           <form class="form-panel" id="listingForm">
             <div class="section-head compact" id="add">
               <div>

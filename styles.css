@@ -44,7 +44,11 @@ textarea {
 }
 
 .is-hidden {
-  display: none;
+  display: none !important;
+}
+
+.app-view:not(.active-view) {
+  display: none !important;
 }
 
 .auth-screen {
@@ -161,6 +165,10 @@ textarea {
 }
 
 .nav a:hover {
+  color: var(--forest);
+}
+
+.nav a.active {
   color: var(--forest);
 }
 
@@ -610,6 +618,16 @@ label textarea {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 0.45fr);
   gap: 22px;
+}
+
+.data-zone.show-add,
+.data-zone.show-inquiries {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.data-zone.show-add .inquiry-panel,
+.data-zone.show-inquiries .form-panel {
+  display: none;
 }
 
 .login-status {
