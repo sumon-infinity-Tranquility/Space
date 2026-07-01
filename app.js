@@ -1,5 +1,6 @@
 const firebaseConfig = window.SPACE_FIREBASE_CONFIG || {};
 const hasFirebaseConfig = Object.values(firebaseConfig).some(Boolean) && firebaseConfig.projectId;
+const registryListings = window.SPACE_REGISTRY_LISTINGS || [];
 
 const demoListings = [
   {
@@ -69,10 +70,13 @@ const nodes = {
   backendStatus: document.querySelector("#backendStatus"),
   mapTitle: document.querySelector("#mapTitle"),
   mapDescription: document.querySelector("#mapDescription"),
+  exactMapLink: document.querySelector("#exactMapLink"),
   selectedBrand: document.querySelector("#selectedBrand"),
   selectedPrice: document.querySelector("#selectedPrice"),
   selectedContact: document.querySelector("#selectedContact"),
   mapFrame: document.querySelector("#mapFrame"),
+  loginForm: document.querySelector("#loginForm"),
+  loginStatus: document.querySelector("#loginStatus"),
   seedDataButton: document.querySelector("#seedDataButton"),
   template: document.querySelector("#listingCardTemplate")
 };
@@ -112,7 +116,8 @@ async function loadListings() {
   }
 
   if (!listings.length) {
-    listings = readLocal("spaceListings", demoListings);
+    const customListings = readLocal("spaceCustomListings", []);
+    listings = [...customListings, ...getBaseListings()];
   }
 }
 
@@ -130,9 +135,11 @@ function wireEvents() {
   });
 
   nodes.searchInput.addEventListener("input", renderListings);
+  nodes.loginForm.addEventListener("submit", saveLogin);
   nodes.listingForm.addEventListener("submit", saveListing);
   nodes.inquiryForm.addEventListener("submit", saveInquiry);
   nodes.seedDataButton.addEventListener("click", seedDemoData);
+  renderLogin();
 }
 
 function render() {
@@ -146,7 +153,7 @@ function renderListings() {
   const query = nodes.searchInput.value.trim().toLowerCase();
   const filtered = listings.filter((listing) => {
     const matchesFilter = activeFilter === "all" || listing.brand === activeFilter;
-    const content = `${listing.brand} ${listing.title} ${listing.location} ${listing.description} ${listing.units}`.toLowerCase();
+    const content = `${listing.brand} ${listing.title} ${listing.location} ${listing.description} ${listing.units} ${listing.sizeRange || ""} ${listing.status || ""}`.toLowerCase();
     return matchesFilter && content.includes(query);
   });
 
@@ -173,12 +180,28 @@ function renderListings() {
     const button = fragment.querySelector(".map-button");
 
     media.classList.add(listing.brand);
+    if (listing.photoUrl) {
+      const image = document.createElement("img");
+      image.src = listing.photoUrl;
+      image.alt = `${listing.title} photo`;
+      image.loading = "lazy";
+      media.append(image);
+    }
     badge.textContent = listing.brand;
     price.textContent = formatPrice(listing.price);
     title.textContent = listing.title;
     location.textContent = listing.location;
     description.textContent = listing.description;
-    units.textContent = listing.units;
+    units.textContent = listing.sizeRange || listing.units;
+    if (listing.propertyLink) {
+      const propertyLink = document.createElement("a");
+      propertyLink.className = "property-link";
+      propertyLink.href = listing.propertyLink;
+      propertyLink.target = "_blank";
+      propertyLink.rel = "noreferrer";
+      propertyLink.textContent = "Property details";
+      fragment.querySelector(".card-body").append(propertyLink);
+    }
     button.addEventListener("click", () => selectListing(listing.id));
     card.addEventListener("dblclick", () => selectListing(listing.id));
     nodes.listingGrid.append(fragment);
@@ -213,8 +236,11 @@ function selectListing(id, shouldScroll = true) {
   nodes.mapDescription.textContent = `${listing.location}. ${listing.description}`;
   nodes.selectedBrand.textContent = listing.brand;
   nodes.selectedPrice.textContent = formatPrice(listing.price);
-  nodes.selectedContact.textContent = listing.contact;
-  nodes.mapFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(`${listing.lat},${listing.lng}`)}&output=embed`;
+  nodes.selectedContact.textContent = [listing.contactName, listing.contact].filter(Boolean).join(" - ") || "-";
+  const mapQuery = getMapQuery(listing);
+  const exactLink = listing.mapLink || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`;
+  nodes.exactMapLink.href = exactLink;
+  nodes.mapFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&output=embed`;
   nodes.inquiryListing.value = listing.id;
   if (shouldScroll) {
     document.querySelector("#map").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -229,10 +255,15 @@ async function saveListing(event) {
     title: form.get("title").trim(),
     location: form.get("location").trim(),
     price: Number(form.get("price")),
-    units: form.get("units").trim(),
+    sizeRange: form.get("sizeRange"),
+    sizeSqft: Number(form.get("sizeSqft")),
+    units: `${Number(form.get("sizeSqft"))} sqft / ${form.get("sizeRange")}`,
     contact: form.get("contact").trim(),
     lat: Number(form.get("lat")),
     lng: Number(form.get("lng")),
+    mapLink: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${form.get("lat")},${form.get("lng")}`)}`,
+    propertyLink: form.get("propertyLink").trim(),
+    photoUrl: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1200&q=80",
     description: form.get("description").trim(),
     createdAt: new Date().toISOString()
   };
@@ -245,7 +276,8 @@ async function saveListing(event) {
   }
 
   listings = [listing, ...listings];
-  writeLocal("spaceListings", listings);
+  const customListings = readLocal("spaceCustomListings", []);
+  writeLocal("spaceCustomListings", [listing, ...customListings]);
   event.currentTarget.reset();
   render();
   selectListing(listing.id);
@@ -274,7 +306,7 @@ async function saveInquiry(event) {
 }
 
 async function seedDemoData() {
-  listings = demoListings.map((listing) => ({ ...listing }));
+  listings = getBaseListings().map((listing) => ({ ...listing }));
 
   if (db && firebaseApi) {
     await Promise.all(
@@ -282,9 +314,34 @@ async function seedDemoData() {
     );
   }
 
-  writeLocal("spaceListings", listings);
+  writeLocal("spaceCustomListings", []);
   render();
   selectListing(listings[0].id);
+}
+
+function saveLogin(event) {
+  event.preventDefault();
+  const form = new FormData(event.currentTarget);
+  const user = form.get("user").trim();
+  localStorage.setItem("spaceUser", JSON.stringify({ user, signedInAt: new Date().toISOString() }));
+  event.currentTarget.reset();
+  renderLogin();
+}
+
+function renderLogin() {
+  const session = readLocal("spaceUser", null);
+  nodes.loginStatus.textContent = session ? `Logged in as ${session.user}` : "Not logged in";
+}
+
+function getBaseListings() {
+  return registryListings.length ? registryListings : demoListings;
+}
+
+function getMapQuery(listing) {
+  if (Number.isFinite(Number(listing.lat)) && Number.isFinite(Number(listing.lng))) {
+    return `${listing.lat},${listing.lng}`;
+  }
+  return `${listing.location}, Bangladesh`;
 }
 
 function formatPrice(value) {

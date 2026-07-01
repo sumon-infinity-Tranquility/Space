@@ -252,7 +252,8 @@ h2 {
 
 .workspace,
 .data-zone,
-.map-zone {
+.map-zone,
+.login-zone {
   padding: clamp(34px, 5vw, 70px) clamp(18px, 4vw, 56px);
 }
 
@@ -324,6 +325,13 @@ label textarea {
 .card-media {
   height: 170px;
   background: linear-gradient(135deg, var(--forest), var(--leaf));
+}
+
+.card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .card-media.Active {
@@ -410,6 +418,24 @@ label textarea {
   line-height: 1.6;
 }
 
+.map-link,
+.property-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 38px;
+  margin-top: 8px;
+  padding: 9px 12px;
+  color: var(--forest);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-weight: 800;
+}
+
+.property-link {
+  margin-top: 12px;
+}
+
 .detail-list {
   display: grid;
   gap: 12px;
@@ -450,12 +476,39 @@ label textarea {
   gap: 22px;
 }
 
+.login-zone {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.42fr);
+  align-items: center;
+  gap: 24px;
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+}
+
+.login-copy p,
+.login-status {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
 .form-panel,
-.inquiry-panel {
+.inquiry-panel,
+.login-panel {
   padding: clamp(18px, 3vw, 30px);
   background: #fff;
   border: 1px solid var(--line);
   border-radius: 8px;
+}
+
+.login-panel {
+  display: grid;
+  gap: 14px;
+  box-shadow: 0 8px 28px rgba(22, 32, 28, 0.06);
+}
+
+.login-status {
+  margin: 0;
+  font-weight: 800;
 }
 
 .form-grid {
@@ -541,7 +594,8 @@ label textarea {
   .topbar,
   .hero,
   .map-zone,
-  .data-zone {
+  .data-zone,
+  .login-zone {
     grid-template-columns: 1fr;
   }
 

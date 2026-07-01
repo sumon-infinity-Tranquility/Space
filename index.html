@@ -19,20 +19,20 @@
         <nav class="nav" aria-label="Primary navigation">
           <a href="#inventory">Inventory</a>
           <a href="#map">Map</a>
+          <a href="#login">Login</a>
           <a href="#add">Add Space</a>
           <a href="#inquiries">Inquiries</a>
         </nav>
-        <button class="ghost-button" id="seedDataButton" type="button">Load Demo Data</button>
+        <button class="ghost-button" id="seedDataButton" type="button">Load Registry Data</button>
       </header>
 
       <main id="home">
         <section class="hero">
           <div class="hero-copy">
             <span class="eyebrow">Accommodation and living vertical</span>
-            <h1>One managed system for hotels, homes, offices, factories, and operational rentals.</h1>
+            <h1>Find space. Move faster.</h1>
             <p>
-              Space brings fragmented stay, rent, and secure operating needs into one searchable platform with reliable listings,
-              transparent pricing, verified utility details, and direct booking flows.
+              Verified rental spaces with clear prices, map links, photos, contacts, and operating details in one place.
             </p>
             <div class="hero-actions">
               <a class="primary-button" href="#inventory">Explore spaces</a>
@@ -97,6 +97,7 @@
             <span class="eyebrow">Google Maps location</span>
             <h2 id="mapTitle">Select a listing to inspect its location.</h2>
             <p id="mapDescription">Listings include area, utility details, price, and coordinates so operations teams can decide faster.</p>
+            <a class="map-link" id="exactMapLink" href="https://www.google.com/maps?q=Dhaka%2C%20Bangladesh" target="_blank" rel="noreferrer">Open exact map link</a>
             <dl class="detail-list">
               <div>
                 <dt>Selected brand</dt>
@@ -121,6 +122,26 @@
               src="https://www.google.com/maps?q=Dhaka%2C%20Bangladesh&output=embed"
             ></iframe>
           </div>
+        </section>
+
+        <section class="login-zone" id="login">
+          <div class="login-copy">
+            <span class="eyebrow">User access</span>
+            <h2>Login before managing property records.</h2>
+            <p>Use this interface for property teams, brokers, and operators who need to add or review spaces.</p>
+          </div>
+          <form class="login-panel" id="loginForm">
+            <label>
+              Email or phone
+              <input name="user" required placeholder="team@space.com" autocomplete="username" />
+            </label>
+            <label>
+              Password
+              <input name="password" type="password" required placeholder="Password" autocomplete="current-password" />
+            </label>
+            <button class="secondary-button submit" type="submit">Login</button>
+            <p class="login-status" id="loginStatus">Not logged in</p>
+          </form>
         </section>
 
         <section class="data-zone">
@@ -155,8 +176,18 @@
                 <input name="price" type="number" min="0" required placeholder="85000" />
               </label>
               <label>
-                Bedrooms or units
-                <input name="units" required placeholder="3 rooms / 12 desks / 2200 sqft" />
+                Property size
+                <select name="sizeRange" required>
+                  <option value="Under 300 sqft">Under 300 sqft</option>
+                  <option value="300-799 sqft">300-799 sqft</option>
+                  <option value="800-1,499 sqft">800-1,499 sqft</option>
+                  <option value="1,500-2,499 sqft">1,500-2,499 sqft</option>
+                  <option value="2,500+ sqft">2,500+ sqft</option>
+                </select>
+              </label>
+              <label>
+                Exact size
+                <input name="sizeSqft" type="number" min="1" required placeholder="2200" />
               </label>
               <label>
                 Contact
@@ -169,6 +200,10 @@
               <label>
                 Longitude
                 <input name="lng" type="number" step="any" required placeholder="90.4066" />
+              </label>
+              <label class="full">
+                Property details link
+                <input name="propertyLink" type="url" placeholder="Google Drive, website, or document link" />
               </label>
               <label class="full">
                 Description
@@ -231,6 +266,7 @@
     </template>
 
     <script src="./config.js"></script>
+    <script src="./registry-data.js"></script>
     <script type="module" src="./app.js"></script>
   </body>
 </html>
