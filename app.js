@@ -69,6 +69,7 @@ const nodes = {
   authSubmit: document.querySelector("#authSubmit"),
   authStatus: document.querySelector("#authStatus"),
   logoutButton: document.querySelector("#logoutButton"),
+  appMain: document.querySelector("#appMain"),
   appViews: document.querySelectorAll(".app-view"),
   viewLinks: document.querySelectorAll("[data-view]"),
   propertyTools: document.querySelector("#propertyTools"),
@@ -474,7 +475,7 @@ function showView(view) {
   }
 
   window.location.hash = requestedView;
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  nodes.appMain.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function getBaseListings() {

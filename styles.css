@@ -43,6 +43,17 @@ textarea {
   min-height: 100vh;
 }
 
+.app-shell {
+  height: 100vh;
+  overflow: hidden;
+}
+
+#appMain {
+  height: calc(100vh - 74px);
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
 .is-hidden {
   display: none !important;
 }
@@ -118,12 +129,12 @@ textarea {
 }
 
 .topbar {
-  position: sticky;
-  top: 0;
-  z-index: 20;
+  position: relative;
+  z-index: 30;
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
+  min-height: 74px;
   gap: 24px;
   padding: 16px clamp(18px, 4vw, 56px);
   background: rgba(251, 252, 250, 0.92);
@@ -749,6 +760,17 @@ label textarea {
 
   .hero {
     min-height: auto;
+  }
+
+  .app-shell {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  #appMain {
+    height: auto;
+    overflow: visible;
   }
 }
 
