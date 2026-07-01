@@ -86,7 +86,8 @@ textarea {
   box-shadow: var(--shadow);
 }
 
-.auth-tabs {
+.auth-tabs,
+.role-tabs {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
@@ -95,7 +96,8 @@ textarea {
   border-radius: 8px;
 }
 
-.auth-tab {
+.auth-tab,
+.role-tab {
   min-height: 40px;
   border: 0;
   border-radius: 6px;
@@ -105,7 +107,8 @@ textarea {
   font-weight: 800;
 }
 
-.auth-tab.active {
+.auth-tab.active,
+.role-tab.active {
   color: #fff;
   background: var(--forest);
 }
@@ -324,9 +327,70 @@ h2 {
 }
 
 .workspace,
+.dashboard-zone,
 .data-zone,
 .map-zone {
   padding: clamp(34px, 5vw, 70px) clamp(18px, 4vw, 56px);
+}
+
+.dashboard-zone {
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.1fr repeat(2, minmax(170px, 0.55fr)) minmax(240px, 0.8fr);
+  gap: 16px;
+}
+
+.profile-card {
+  min-height: 190px;
+  padding: 22px;
+  background: #f7faf7;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.profile-label {
+  display: inline-flex;
+  margin-bottom: 14px;
+  color: var(--leaf);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.profile-card h3 {
+  margin-bottom: 10px;
+}
+
+.profile-card p {
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.profile-metric {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--forest);
+  font-size: 2.65rem;
+  line-height: 1;
+}
+
+.action-card {
+  background: var(--forest);
+  color: #fff;
+}
+
+.action-card .profile-label,
+.action-card p {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.action-card .secondary-button {
+  background: var(--sun);
+  color: var(--ink);
 }
 
 .section-head {
@@ -660,7 +724,8 @@ label textarea {
   }
 
   .listing-grid,
-  .brand-strip {
+  .brand-strip,
+  .dashboard-grid {
     grid-template-columns: 1fr;
   }
 

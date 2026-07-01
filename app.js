@@ -57,6 +57,7 @@ let listings = [];
 let inquiries = [];
 let activeFilter = "all";
 let authMode = "login";
+let authRole = "customer";
 let db = null;
 let firebaseApi = null;
 
@@ -67,6 +68,20 @@ const nodes = {
   authSubmit: document.querySelector("#authSubmit"),
   authStatus: document.querySelector("#authStatus"),
   logoutButton: document.querySelector("#logoutButton"),
+  dashboardEyebrow: document.querySelector("#dashboardEyebrow"),
+  dashboardTitle: document.querySelector("#dashboardTitle"),
+  roleStatus: document.querySelector("#roleStatus"),
+  profileName: document.querySelector("#profileName"),
+  profileSummary: document.querySelector("#profileSummary"),
+  metricOneLabel: document.querySelector("#metricOneLabel"),
+  metricOne: document.querySelector("#metricOne"),
+  metricOneText: document.querySelector("#metricOneText"),
+  metricTwoLabel: document.querySelector("#metricTwoLabel"),
+  metricTwo: document.querySelector("#metricTwo"),
+  metricTwoText: document.querySelector("#metricTwoText"),
+  dashboardActionTitle: document.querySelector("#dashboardActionTitle"),
+  dashboardActionText: document.querySelector("#dashboardActionText"),
+  dashboardActionLink: document.querySelector("#dashboardActionLink"),
   listingGrid: document.querySelector("#listingGrid"),
   listingCount: document.querySelector("#listingCount"),
   listingForm: document.querySelector("#listingForm"),
@@ -143,6 +158,9 @@ function wireEvents() {
   document.querySelectorAll("[data-auth-mode]").forEach((button) => {
     button.addEventListener("click", () => setAuthMode(button.dataset.authMode));
   });
+  document.querySelectorAll("[data-auth-role]").forEach((button) => {
+    button.addEventListener("click", () => setAuthRole(button.dataset.authRole));
+  });
   nodes.authForm.addEventListener("submit", saveLogin);
   nodes.logoutButton.addEventListener("click", logout);
   nodes.listingForm.addEventListener("submit", saveListing);
@@ -155,6 +173,7 @@ function render() {
   renderListings();
   renderInquiryOptions();
   renderInquiries();
+  renderDashboard();
   nodes.listingCount.textContent = listings.length.toString();
 }
 
@@ -312,6 +331,7 @@ async function saveInquiry(event) {
   writeLocal("spaceInquiries", inquiries);
   event.currentTarget.reset();
   renderInquiries();
+  renderDashboard();
 }
 
 async function seedDemoData() {
@@ -332,9 +352,10 @@ function saveLogin(event) {
   event.preventDefault();
   const form = new FormData(event.currentTarget);
   const user = form.get("user").trim();
-  localStorage.setItem("spaceUser", JSON.stringify({ user, mode: authMode, signedInAt: new Date().toISOString() }));
+  localStorage.setItem("spaceUser", JSON.stringify({ user, role: authRole, mode: authMode, signedInAt: new Date().toISOString() }));
   event.currentTarget.reset();
   renderLogin();
+  renderDashboard();
   document.querySelector("#home").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
@@ -343,6 +364,9 @@ function renderLogin() {
   nodes.authScreen.classList.toggle("is-hidden", Boolean(session));
   nodes.appShell.classList.toggle("is-hidden", !session);
   nodes.authStatus.textContent = session ? `Signed in as ${session.user}` : "Enter your details to continue.";
+  if (session) {
+    setAuthRole(session.role || "customer");
+  }
 }
 
 function setAuthMode(mode) {
@@ -352,6 +376,57 @@ function setAuthMode(mode) {
   });
   nodes.authSubmit.textContent = mode === "signin" ? "Sign in" : "Log in";
   nodes.authStatus.textContent = mode === "signin" ? "Create or confirm your Space access." : "Enter your details to continue.";
+}
+
+function setAuthRole(role) {
+  authRole = role;
+  document.querySelectorAll("[data-auth-role]").forEach((button) => {
+    button.classList.toggle("active", button.dataset.authRole === role);
+  });
+  nodes.authStatus.textContent = role === "admin"
+    ? "Admin access opens registry controls and operational metrics."
+    : "Customer access opens saved searches, inquiries, and visit requests.";
+}
+
+function renderDashboard() {
+  const session = readLocal("spaceUser", null);
+  const role = session?.role || authRole;
+  const customCount = readLocal("spaceCustomListings", []).length;
+  const activeCount = listings.filter((listing) => listing.brand === "Active").length;
+
+  nodes.profileName.textContent = session?.user || "Guest";
+  nodes.roleStatus.textContent = role === "admin" ? "Admin profile" : "Customer profile";
+
+  if (role === "admin") {
+    nodes.dashboardEyebrow.textContent = "Admin dashboard";
+    nodes.dashboardTitle.textContent = "Manage registry, listings, and property flow.";
+    nodes.profileSummary.textContent = "Admin view for property intake, registry review, map checks, and broker contact data.";
+    nodes.metricOneLabel.textContent = "Registry listings";
+    nodes.metricOne.textContent = listings.length.toString();
+    nodes.metricOneText.textContent = `${activeCount} commercial Active records are available for review.`;
+    nodes.metricTwoLabel.textContent = "Added properties";
+    nodes.metricTwo.textContent = customCount.toString();
+    nodes.metricTwoText.textContent = "New property submissions stored from this browser.";
+    nodes.dashboardActionTitle.textContent = "Add property";
+    nodes.dashboardActionText.textContent = "Submit a new property with map coordinates, size, and details link.";
+    nodes.dashboardActionLink.href = "#add";
+    nodes.dashboardActionLink.textContent = "Open property form";
+    return;
+  }
+
+  nodes.dashboardEyebrow.textContent = "Customer dashboard";
+  nodes.dashboardTitle.textContent = "Track spaces and request visits.";
+  nodes.profileSummary.textContent = "Customer view for browsing verified spaces, opening exact map links, and sending visit inquiries.";
+  nodes.metricOneLabel.textContent = "Available listings";
+  nodes.metricOne.textContent = listings.length.toString();
+  nodes.metricOneText.textContent = "Verified rental options in the current registry.";
+  nodes.metricTwoLabel.textContent = "Your inquiries";
+  nodes.metricTwo.textContent = inquiries.length.toString();
+  nodes.metricTwoText.textContent = "Visit requests saved from this browser.";
+  nodes.dashboardActionTitle.textContent = "Find a space";
+  nodes.dashboardActionText.textContent = "Search by area, size, status, or intended use.";
+  nodes.dashboardActionLink.href = "#inventory";
+  nodes.dashboardActionLink.textContent = "Open inventory";
 }
 
 function logout() {

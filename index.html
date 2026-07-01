@@ -25,6 +25,10 @@
           <button class="auth-tab active" data-auth-mode="login" type="button">Log in</button>
           <button class="auth-tab" data-auth-mode="signin" type="button">Sign in</button>
         </div>
+        <div class="role-tabs" role="tablist" aria-label="Profile type">
+          <button class="role-tab active" data-auth-role="customer" type="button">Customer</button>
+          <button class="role-tab" data-auth-role="admin" type="button">Admin</button>
+        </div>
         <label>
           Email or phone
           <input name="user" required placeholder="team@space.com" autocomplete="username" />
@@ -45,6 +49,7 @@
           <span>Space</span>
         </a>
         <nav class="nav" aria-label="Primary navigation">
+          <a href="#dashboard">Dashboard</a>
           <a href="#inventory">Inventory</a>
           <a href="#map">Map</a>
           <a href="#add">Add Space</a>
@@ -98,6 +103,39 @@
             <span>SLEEP</span>
             <p>Affordable, comfortable stays where students, bachelors, and young professionals can settle quickly.</p>
           </article>
+        </section>
+
+        <section class="dashboard-zone" id="dashboard">
+          <div class="section-head">
+            <div>
+              <span class="eyebrow" id="dashboardEyebrow">Profile dashboard</span>
+              <h2 id="dashboardTitle">Welcome to Space.</h2>
+            </div>
+            <span class="status-pill" id="roleStatus">Customer profile</span>
+          </div>
+          <div class="dashboard-grid">
+            <article class="profile-card">
+              <span class="profile-label">Signed in as</span>
+              <h3 id="profileName">Guest</h3>
+              <p id="profileSummary">Your profile overview appears here after login.</p>
+            </article>
+            <article class="profile-card">
+              <span class="profile-label" id="metricOneLabel">Available listings</span>
+              <strong class="profile-metric" id="metricOne">0</strong>
+              <p id="metricOneText">Spaces ready to review.</p>
+            </article>
+            <article class="profile-card">
+              <span class="profile-label" id="metricTwoLabel">Your inquiries</span>
+              <strong class="profile-metric" id="metricTwo">0</strong>
+              <p id="metricTwoText">Visit requests saved from this browser.</p>
+            </article>
+            <article class="profile-card action-card">
+              <span class="profile-label">Next action</span>
+              <h3 id="dashboardActionTitle">Start browsing</h3>
+              <p id="dashboardActionText">Search the registry and open exact map links for the best match.</p>
+              <a class="secondary-button" id="dashboardActionLink" href="#inventory">Open inventory</a>
+            </article>
+          </div>
         </section>
 
         <section class="workspace" id="inventory">
